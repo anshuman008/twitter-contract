@@ -4,19 +4,35 @@ pragma solidity ^0.8.17;
 
 
 contract Tweeter {
+
+
+   address admin;
+    uint16 public MAX_TWEET_LENGTH = 300;
    struct Tweet{
     string content;
     uint256 timestamp;
     uint256 likes;
    }
+
+
+   constructor(){
+    admin = msg.sender;
+   }
+
+   
+  modifier onlyAdmin() {
+     require(msg.sender == admin,"Only Admin can access this!");
+     _;
+  }
   
+
 
   mapping (address => Tweet[]) public  tweets;
 
 
   function addTweet (string memory tweet) public  {
     require(bytes(tweet).length > 0,"tweet cant be empty!");
-    require(bytes(tweet).length <= 300 ,"tweet content is too long!");
+    require(bytes(tweet).length <= MAX_TWEET_LENGTH ,"tweet content is too long!");
 
     Tweet memory newTweet = Tweet({
       content: tweet,
@@ -37,5 +53,9 @@ contract Tweeter {
     return tweets[_userAddress];
   }
 
+
+  function changeTweetMaxLength(uint16 _newLen) public   onlyAdmin  {
+     MAX_TWEET_LENGTH = _newLen;
+  }
 
 }
