@@ -1,11 +1,24 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.17;
 
+ 
 
 
 contract Tweeter {
+
+
     address admin;
     uint16 public MAX_TWEET_LENGTH = 300;
+    uint16 public MAX_COMMENT_LENGTH = 150;
+
+
+
+ struct Comment {
+   address commenter;
+   string content;
+  uint256 timestamp;
+ }
+
 
 
     struct Tweet{
@@ -13,6 +26,7 @@ contract Tweeter {
     string content;
     uint256 timestamp;
     address[] likers;
+    Comment[] comments;
    }
 
 
@@ -38,8 +52,6 @@ contract Tweeter {
     
 
     Tweet storage newTweet = tweets[msg.sender][tweets[msg.sender].length - 1];
-   
-
      newTweet.id = tweets[msg.sender].length -1 ;
      newTweet.content = tweet;
      newTweet.timestamp = block.timestamp;
@@ -47,20 +59,45 @@ contract Tweeter {
   }
 
 
-  function getTweet(uint256 _id) external view returns (  string memory content,uint256 timestamp, uint likes) {
-
+  function getTweet(address _authorAddress,uint256 _id) external view returns (  string memory content,uint256 timestamp, uint likes, uint commentsCount) {
+      
+      require(_id < tweets[_authorAddress].length , "Tweet does not exist");
+  
      return (
-       tweets[msg.sender][_id].content,
-       tweets[msg.sender][_id].timestamp,
-       tweets[msg.sender][_id].likers.length
+       tweets[_authorAddress][_id].content,
+       tweets[_authorAddress][_id].timestamp,
+       tweets[_authorAddress][_id].likers.length,
+       tweets[_authorAddress][_id].comments.length
      );
   }
 
 
-  function getallTweets(address _userAddress) external view returns (Tweet[] memory) {
-
-    
+  function getAlllTweets(address _userAddress) external view returns (Tweet[] memory) {
     return tweets[_userAddress];
+  }
+
+  function comment(address _authorAddress,uint256 _tweetID, string memory content) public  {
+   
+      require(_tweetID < tweets[_authorAddress].length, "Tweet does not exist");
+      require(bytes(content).length > 0 ,"comment cant be empty");
+      require(bytes(content).length < MAX_COMMENT_LENGTH ,"comment is too long");
+
+      Tweet storage user = tweets[_authorAddress][_tweetID];
+
+      Comment memory newComment = 
+      Comment({
+        commenter: msg.sender,
+        content: content,
+        timestamp: block.timestamp
+      });
+
+      user.comments.push(newComment);
+  }
+
+  function getAllComments(address _authorAddress,uint256 _tweetID) public view returns (Comment[] memory) {
+      
+      require(_tweetID < tweets[_authorAddress].length, "Tweet does not exist");
+      return tweets[_authorAddress][_tweetID].comments;
   }
 
   function addLike(address _userAddress, uint256 _tweetId) public {
@@ -71,7 +108,7 @@ contract Tweeter {
       tweets[_userAddress][_tweetId].likers.push(msg.sender);
   }
 
-  function getAlllikers(address _userAddress, uint256 _tweetId) public view returns (address[] memory) {
+  function getAllikers(address _userAddress, uint256 _tweetId) public view returns (address[] memory) {
 
     require(_tweetId < tweets[_userAddress].length, "Tweet does not exist");
     return tweets[_userAddress][_tweetId].likers;
