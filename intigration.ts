@@ -5,7 +5,7 @@ import { Contract } from "ethers";
 dotenv.config();
 
 const provider = new ethers.JsonRpcProvider(process.env.RPC_URL!);
-const CONTRACT_ADDRESS = "0xBe5aa94E072D2e7ef854C1e0aC3d01FA4911323C";
+const CONTRACT_ADDRESS = "0x75272239D73BfFF37B3d146bd82b05D440F96607";
 const wallet = new Wallet(process.env.PRIVATE_KEY!, provider);
 
 const abi = [
@@ -133,12 +133,12 @@ const getTweetCount = async (_authorAddress: string) => {
 };
 
 (async () => {
-  // await addTweet("this is my first tweet on blockchain!");
-  // await getTweet("0x178AB9A0e1e1679d086799fffbd2699E4573f4E9",0);
-  //   await addLike("0x178AB9A0e1e1679d086799fffbd2699E4573f4E9",0);
-  //   await unLike("0x178AB9A0e1e1679d086799fffbd2699E4573f4E9", 0);
+  await addTweet("this is my first tweet on blockchain!");
+  // await getTweet("0x60aee8f8E31B3A20928E71Cb2eE745A2A3A03e64",0);
+  // await addLike("0x60aee8f8E31B3A20928E71Cb2eE745A2A3A03e64",0);
+  // await unLike("0x178AB9A0e1e1679d086799fffbd2699E4573f4E9", 0);
   // await addComment("0x178AB9A0e1e1679d086799fffbd2699E4573f4E9",0,"superb!");
-  //   await getAllTweets("0x178AB9A0e1e1679d086799fffbd2699E4573f4E9");
+  // await getAllTweets("0x178AB9A0e1e1679d086799fffbd2699E4573f4E9");
   // await getAllComments("0x178AB9A0e1e1679d086799fffbd2699E4573f4E9",0);
   // await getAllLikers("0x178AB9A0e1e1679d086799fffbd2699E4573f4E9",0);
   // await getTweetCount("0x178AB9A0e1e1679d086799fffbd2699E4573f4E9");
