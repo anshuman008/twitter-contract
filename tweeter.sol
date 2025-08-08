@@ -56,14 +56,14 @@ contract Tweeter {
         );
     }
 
-    function getAllTweets(address _userAddress) external view returns (Tweet[] memory) {
-        return tweets[_userAddress];
+    function getAllTweets(address _authorAddress) external view returns (Tweet[] memory) {
+        return tweets[_authorAddress];
     }
 
     function addComment(address _authorAddress, uint256 _tweetID, string calldata content) external  {
         require(_tweetID < tweets[_authorAddress].length, "Tweet does not exist");
         require(bytes(content).length > 0, "Comment can't be empty!");
-        require(bytes(content).length <= MAX_COMMENT_LENGTH, "Comment is too long!"); // FIXED: <= instead of <
+        require(bytes(content).length <= MAX_COMMENT_LENGTH, "Comment is too long!"); 
 
         Tweet storage targetTweet = tweets[_authorAddress][_tweetID];
 
@@ -81,23 +81,23 @@ contract Tweeter {
         return tweets[_authorAddress][_tweetID].comments;
     }
 
-    function addLike(address _userAddress, uint256 _tweetId) external  {
-        require(_tweetId < tweets[_userAddress].length, "Tweet does not exist");
-        require(!_hasLiked(msg.sender, _userAddress, _tweetId), "Already liked the tweet");
+    function addLike(address _authorAddress, uint256 _tweetId) external  {
+        require(_tweetId < tweets[_authorAddress].length, "Tweet does not exist");
+        require(!_hasLiked(msg.sender, _authorAddress, _tweetId), "Already liked the tweet");
 
-        tweets[_userAddress][_tweetId].likers.push(msg.sender);
+        tweets[_authorAddress][_tweetId].likers.push(msg.sender);
     }
 
-    function getAllLikers(address _userAddress, uint256 _tweetId) external  view returns (address[] memory) {
-        require(_tweetId < tweets[_userAddress].length, "Tweet does not exist");
-        return tweets[_userAddress][_tweetId].likers;
+    function getAllLikers(address _authorAddress, uint256 _tweetId) external  view returns (address[] memory) {
+        require(_tweetId < tweets[_authorAddress].length, "Tweet does not exist");
+        return tweets[_authorAddress][_tweetId].likers;
     }
 
-    function unLike(address _userAddress, uint256 _tweetId) external  {
-        require(_tweetId < tweets[_userAddress].length, "Tweet does not exist");
-        require(_hasLiked(msg.sender, _userAddress, _tweetId), "You can't unlike without like");
+    function unLike(address _authorAddress, uint256 _tweetId) external  {
+        require(_tweetId < tweets[_authorAddress].length, "Tweet does not exist");
+        require(_hasLiked(msg.sender, _authorAddress, _tweetId), "You can't unlike without like");
 
-        _removeLike(msg.sender, _userAddress, _tweetId);
+        _removeLike(msg.sender, _authorAddress, _tweetId);
     }
 
     function _hasLiked(address _userAddress, address _authorAddress, uint256 _tweetId) 
@@ -130,8 +130,8 @@ contract Tweeter {
         MAX_COMMENT_LENGTH = _newLen;
     }
 
-    function getTweetCount(address _userAddress) external view returns (uint256) {
-        return tweets[_userAddress].length;
+    function getTweetCount(address _authorAddress) external view returns (uint256) {
+        return tweets[_authorAddress].length;
     }
 
     function getSpecificComment(address _authorAddress, uint256 _tweetID, uint256 _commentIndex)
